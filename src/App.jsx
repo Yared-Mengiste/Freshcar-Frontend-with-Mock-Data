@@ -21,33 +21,16 @@ function App() {
   const { user, login, logout } = useUser();
 
   const [products, setProducts] = useState([]);
-  const [fruits, setFruits] = useState([]);
-  const [vegetables, setVegetables] = useState([]);
-  const [animals, setAnimals] = useState([]);
-  const [cereals, setCereals] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const localUser = sessionStorage.getItem("user");
-    const localCart = sessionStorage.getItem("cart");
-    if (localUser) login(JSON.parse(localUser));
-    if (localCart) setCart(JSON.parse(localCart));
-
     const allProducts = data.tables.products;
     setProducts(allProducts);
-    setFruits(allProducts.filter((p) => p.category === 2));
-    setVegetables(allProducts.filter((p) => p.category === 1));
-    setAnimals(allProducts.filter((p) => p.category === 4));
-    setCereals(allProducts.filter((p) => p.category === 3));
     setLoading(false);
   }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("user", JSON.stringify(user));
-    sessionStorage.setItem("cart", JSON.stringify(cart));
-  }, [user, cart]);
 
   useEffect(() => {
     if (search.trim().length > 0) {
@@ -56,10 +39,6 @@ function App() {
       navigate("/products");
     }
   }, [search]);
-
-  function userLoggedIn(userInfo) {
-    login(userInfo);
-  }
 
   if (loading) return <div>Loading...</div>;
 
@@ -81,44 +60,51 @@ function App() {
           <Route index path="/" element={<Home login={!!user.id} />} />
           <Route
             path="/products"
-            element={
-              <Products
-                fruits={fruits.slice(0, 4)}
-                vegetables={vegetables.slice(0, 4)}
-                cereals={cereals.slice(0, 4)}
-                animals={animals.slice(0, 4)}
-                addToCart={addToCart}
-                login={!!user.id}
-              />
-            }
+            element={<Products addToCart={addToCart} login={!!user.id} />}
           />
           <Route path="/contact" element={<ContactForm />} />
           <Route
-            path="/products/fruits"
-            element={<Category products={fruits} title="Fruits" addToCart={addToCart} />}
-          />
-          <Route
-            path="/products/vegetables"
-            element={<Category products={vegetables} title="Vegetables" login={!!user.id} addToCart={addToCart} />}
-          />
-          <Route
-            path="/products/animals"
-            element={<Category products={animals} title="Animal Products" login={!!user.id} addToCart={addToCart} />}
-          />
-          <Route
-            path="/products/cereals"
-            element={<Category products={cereals} title="Cereals and Grains" login={!!user.id} addToCart={addToCart} />}
+            path="/products/:type"
+            element={
+              <Category
+                allProducts={products}
+                login={!!user.id}
+                addToCart={addToCart}
+              />
+            }
           />
           <Route
             path="/products/search"
-            element={<Category products={products.filter((p) => p.name.includes(search.toLowerCase()))} title="Search" login={!!user.id} addToCart={addToCart} />}
+            element={
+              <Category
+                searchProducts={products.filter((p) =>
+                  p.name.toLowerCase().includes(search.toLowerCase())
+                )}
+                title="Search"
+                login={!!user.id}
+                addToCart={addToCart}
+              />
+            }
           />
-          <Route path="/signin" element={<AccountForm onSignIn={userLoggedIn} />} />
-          <Route path="/userProfile" element={<UserProfile user={user} setUserData={login} userLogout={logout} />} />
-          <Route path="/admin" element={<Admin products={products} setProducts={setProducts} />} />
+          <Route path="/signin" element={<AccountForm />} />
+          <Route
+            path="/userProfile"
+            element={
+              <UserProfile
+                user={user}
+                setUserData={login}
+                userLogout={logout}
+              />
+            }
+          />
+          <Route
+            path="/admin"
+            element={<Admin products={products} setProducts={setProducts} />}
+          />
           <Route path="/orders" element={<Delivery userId={user.id} />} />
           <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
+
         <Footer login={!!user.id} />
       </div>
     </div>

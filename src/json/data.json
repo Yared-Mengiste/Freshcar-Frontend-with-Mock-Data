@@ -1,0 +1,184 @@
+{
+  "tables": {
+    "account_type": [
+      {
+        "id": 2,
+        "name": "admin"
+      },
+      {
+        "id": 3,
+        "name": "driver"
+      },
+      {
+        "id": 1,
+        "name": "user"
+      }
+    ],
+    "contact_submissions": [
+      {
+        "id": 1,
+        "name": "YARED",
+        "email": "yaredmengiste@gmail.com",
+        "message": "this app is ass",
+        "created_at": "2025-02-13 13:35:18"
+      },
+      {
+        "id": 2,
+        "name": "yassa",
+        "email": "yass@gmail.com",
+        "message": "Abenezer is a B**ch",
+        "created_at": "2025-02-13 20:40:31"
+      }
+    ],
+    "delivery": [
+      {
+        "id": 2,
+        "order_id": 8,
+        "user_id": 1,
+        "driver_id": 7,
+        "created_at": "2025-02-15 12:52:29",
+        "status": "pending"
+      },
+      {
+        "id": 3,
+        "order_id": 9,
+        "user_id": 1,
+        "driver_id": 7,
+        "created_at": "2025-02-16 11:09:10",
+        "status": "pending"
+      }
+    ],
+    "order_items": [
+      {
+        "id": 23,
+        "order_id": 8,
+        "product_id": 13,
+        "quantity": 6,
+        "price": 75.0
+      },
+      {
+        "id": 24,
+        "order_id": 8,
+        "product_id": 14,
+        "quantity": 6,
+        "price": 50.0
+      }
+    ],
+    "orders": [
+      {
+        "id": 8,
+        "user_id": 12,
+        "total_price": 2575.0,
+        "created_at": "2025-02-15 12:52:29"
+      },
+      {
+        "id": 9,
+        "user_id": 10,
+        "total_price": 285.0,
+        "created_at": "2025-02-16 11:09:10"
+      }
+    ],
+    "product_category": [
+      {
+        "id": 1,
+        "name": "vegetable"
+      },
+      {
+        "id": 2,
+        "name": "fruit"
+      },
+      {
+        "id": 3,
+        "name": "cereal and grain"
+      },
+      {
+        "id": 4,
+        "name": "animal product"
+      }
+    ],
+    "products": [
+      {
+        "id": 1,
+        "name": "apple",
+        "price": 250,
+        "img": "apple.jpg",
+        "category": 2
+      },
+      {
+        "id": 2,
+        "name": "avocado",
+        "price": 70,
+        "img": "avocado.jpg",
+        "category": 2
+      },
+      {
+        "id": 3,
+        "name": "banana",
+        "price": 60,
+        "img": "banana.jpg",
+        "category": 2
+      },
+      {
+        "id": 13,
+        "name": "onion",
+        "price": 75,
+        "img": "onion.jpg",
+        "category": 1
+      },
+      {
+        "id": 14,
+        "name": "potato",
+        "price": 50,
+        "img": "potato.jpg",
+        "category": 1
+      },
+      {
+        "id": 20,
+        "name": "egg",
+        "price": 12,
+        "img": "egg.jpg",
+        "category": 4
+      }
+    ],
+    "shop": [
+      {
+        "id": 1,
+        "name": "showa",
+        "city": "Addis Ababa",
+        "subcity": "Kofie Keranio",
+        "owner": "owner",
+        "email": "email",
+        "phone_no": "phone_no"
+      },
+      {
+        "id": 2,
+        "name": "Abadir",
+        "city": "Addis Ababa",
+        "subcity": "Arada",
+        "owner": "Ananuel T.",
+        "email": "abebehailu@gmail.com",
+        "phone_no": "0911370874"
+      }
+    ],
+    "users": [
+      {
+        "id": 1,
+        "name": "shewa",
+        "city": "Addis Ababa",
+        "subcity": "Kolfe Keranio",
+        "full_name": "abebe hailu",
+        "email": "abebehailu@gmail.com",
+        "phone_no": "phone_no"
+      },
+      {
+        "id": 2,
+        "name": "Abadir",
+        "city": "Addis Ababa",
+        "subcity": "Arada",
+        "full_name": "Amanuel T.",
+        "email": "freshman@example.com",
+        "phone_no": "0912345678"
+      }
+    ]
+  }
+}

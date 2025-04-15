@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CartItem from "./CartItem";
@@ -15,10 +15,17 @@ const toggleCart = () => {
 };
 
 const NavBar = (props) => {
-  const { setSearch } = useSearch();
+  const {setSearch } = useSearch();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
-  
+
+   useEffect(() => {
+      if (searchText.trim().length > 0) {
+        navigate("/products/search");
+      } else {
+        navigate("/");
+      }
+    }, [searchText]);
 
   const handleSearch = (e) => {
     const value = e.target.value;

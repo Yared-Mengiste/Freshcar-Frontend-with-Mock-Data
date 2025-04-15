@@ -14,15 +14,12 @@ import Admin from "./pages/Admin";
 import data from "../src/json/data.json";
 import { useCart } from "./context/CartProvider";
 import { useUser } from "./context/UserContext";
-import { useSearch } from "./context/SearchContext";
 
 function App() {
   const { cart, addToCart, removeFromCart, clearCart, setCart } = useCart();
   const { user, login, logout } = useUser();
-  const { search } = useSearch();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const allProducts = data.tables.products;
@@ -30,13 +27,7 @@ function App() {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (search.trim().length > 0) {
-      navigate("/products/search");
-    } else {
-      navigate("/");
-    }
-  }, [search]);
+ 
 
   if (loading) return <div>Loading...</div>;
 
@@ -63,7 +54,6 @@ function App() {
             path="/products/:type"
             element={
               <Category
-                allProducts={products}
                 login={!!user.id}
                 addToCart={addToCart}
               />

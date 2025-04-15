@@ -19,72 +19,14 @@ const UserProfile = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (userData.password.length < 4) {
-      setMessage("Password must be at least 4 characters.");
-      return;
-    }
-
-    if (userData.password !== userData.confirmPassword) {
-      setMessage("Passwords do not match.");
-      return;
-    }
-
-    try {
-      const response = await axios.put(
-        `http://localhost/fresh-cart/api.php?action=update_profile`,
-        {
-          id: userData.id, 
-          name: userData.name,
-          password: md5(userData.password),
-          city: userData.city,
-          address: userData.address,
-          phone: userData.phone,
-        }
-      );
-
-      if (response.data.message === "Profile updated successfully") {
-        setMessage("Profile updated successfully!");
-        props.setUserData({
-          ...props.user,
-          id: userData.id,
-          name: userData.name,
-          password: userData.password,
-          city: userData.city,
-          address: userData.address,
-          phone: userData.phone,
-        });
-      } else {
-        setMessage("Failed to update profile. Please try again.");
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      setMessage("An error occurred. Please try again.");
-    }
+    alert("Updated Successfully");
   };
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
-      try {
-        const response = await axios.delete(
-          `http://localhost/fresh-cart/api.php?action=delete_account`,
-          {
-            data: { id: userData.id }, 
-          }
-        );
-
-        if (response.data.message === "Account deleted successfully") {
-          alert(response.data.message);
-          props.userLogout();
-          navigate("/");
-        } else {
-          setMessage("Failed to delete account. Please try again.");
-        }
-      } catch (error) {
-        console.error("Error deleting account:", error);
-        setMessage("An error occurred. Please try again.");
-      }
+      alert(response.data.message);
+      props.userLogout();
+      navigate("/");
     }
   };
 
@@ -104,16 +46,16 @@ const UserProfile = (props) => {
             required
           />
           <label>
-                Phone:
-                <input
-                  type="text"
-                  name="phone"
-                  pattern="09[0-9]{8}"
-                  value={userData.phone}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
+            Phone:
+            <input
+              type="text"
+              name="phone"
+              pattern="09[0-9]{8}"
+              value={userData.phone}
+              onChange={handleChange}
+              required
+            />
+          </label>
           <label>Password:</label>
           <input
             type="password"

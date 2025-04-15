@@ -2,38 +2,21 @@ import React from "react";
 import axios from "axios";
 import "../components/product.css";
 
-
 const EditProducts = (props) => {
   const [newPrice, setNewPrice] = React.useState("");
   const updatePrice = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.put(
-        `http://localhost/fresh-cart/api.php?action=update_product_price`,
-        {
-          product_id: props.id,
-          new_price: newPrice,
-        }
-      );
 
-      if (response.data.message === "Price updated successfully") {
-        // let item = props.products.find(product=>product.id === props.id);
-        // item.price = newPrice;
-        // props.setProduct(props.products.filter(product=>product.id !== props.id))
-        // props.setProduct([...props.products, item])
-        let updatedProducts = props.products.map((product) =>
-          product.id === props.id ? { ...product, price: newPrice } : product
-        );
-        props.setProducts(updatedProducts);
-        alert('Updated')
-        setNewPrice("");
-      } else {
-        console.log("Failed to update");
-      }
-    } catch (error) {
-      console.error("Error updating price:", error);
-    }
+    alert(response.data.message);
+    props.setProducts(
+      props.products.map((product) =>
+        product.id === props.id ? { ...product, price: newPrice } : product
+      )
+    );
   };
+  React.useEffect(() => {
+    setNewPrice(props.price);
+  }, [props.price]);
   return (
     <div className="relation-container">
       <div className="product-card">

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
@@ -10,13 +9,18 @@ import Products from "./pages/Products";
 import Category from "./pages/Category";
 import ContactForm from "./pages/ContactForm";
 import UserProfile from "./pages/UserProfile";
-import Delivery from "./pages/Delivery"
+import Delivery from "./pages/Delivery";
 import Admin from "./pages/Admin";
 
+import data from "../src/json/data.json";
+import { useCart } from "./context/CartProvider";
+import { useUser } from "./context/UserContext";
+
 function App() {
-  const [cart, setCart] = useState([]);
-  const [user, setLoggedIn] = useState({});
-  const [products, setProducts] = useState(null);
+  const { cart, addToCart, removeFromCart, clearCart, setCart } = useCart();
+  const { user, login, logout } = useUser();
+
+  const [products, setProducts] = useState([]);
   const [fruits, setFruits] = useState([]);
   const [vegetables, setVegetables] = useState([]);
   const [animals, setAnimals] = useState([]);
@@ -26,113 +30,55 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost/fresh-cart/api.php?action=get_products"
-        );
-        setProducts(response.data);
-        setFruits(
-          response.data.filter((product) => product.category == 2)
-        );
-        setVegetables(
-          response.data.filter((product) => product.category == 1)
-        );
-        setAnimals(
-          response.data.filter((product) => product.category == 4)
-        );
-        setCereals(
-          response.data.filter((product) => product.category == 3)
-        );
-        setLoading(false);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    const userInfo = sessionStorage.getItem("user");
-    const cartInfo = sessionStorage.getItem("cart");
-    console.log(cartInfo);
-    console.log(userInfo);
-    if (userInfo === null) {
-      setLoggedIn({});
-    } else {
-      setLoggedIn(JSON.parse(userInfo));
-      if (cartInfo) {
-        setCart(JSON.parse(cartInfo));
-      }
-    }
+    const localUser = sessionStorage.getItem("user");
+    const localCart = sessionStorage.getItem("cart");
+    if (localUser) login(JSON.parse(localUser));
+    if (localCart) setCart(JSON.parse(localCart));
 
-    fetchProducts();
+    const allProducts = data.tables.products;
+    setProducts(allProducts);
+    setFruits(allProducts.filter((p) => p.category === 2));
+    setVegetables(allProducts.filter((p) => p.category === 1));
+    setAnimals(allProducts.filter((p) => p.category === 4));
+    setCereals(allProducts.filter((p) => p.category === 3));
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("user", JSON.stringify(user));
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+  }, [user, cart]);
+
   useEffect(() => {
     if (search.trim().length > 0) {
       navigate("/products/search");
-    }else{
+    } else {
       navigate("/products");
     }
   }, [search]);
 
-  const addToCart = (product) => {
-    setCart((prevCart) => {
-      const exist = prevCart.findIndex((item) => item.id === product.id);
-      let temp = [];
-      if (exist === -1) {
-        temp = [...prevCart, product];
-        return [...prevCart, product];
-      } else {
-        temp = prevCart;
-      }
-      return temp;
-    });
-  };
-  const updateSession = () => {
-    sessionStorage.setItem("cart", JSON.stringify(cart));
-    sessionStorage.setItem("user", JSON.stringify(user));
-  };
-
-  const removeFromCart = (productId) => {
-    setCart(cart.filter((item) => item.id !== productId));
-  };
-  const clearCart = () => {
-    setCart([]);
-  };
-  function userLogout() {
-    setLoggedIn({});
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("cart");
-  }
-
   function userLoggedIn(userInfo) {
-    setLoggedIn(userInfo);
-    console.log("signIn:", userInfo);
+    login(userInfo);
   }
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div>
-      {updateSession()}
       <NavBar
-        login={Object.keys(user).length === 0 ? false : true}
+        login={!!user.id}
         removeFromCart={removeFromCart}
         cart={cart}
         userId={user.id}
         clearCart={clearCart}
         user={user}
-        onLogout={userLogout}
+        onLogout={logout}
         setSearch={setSearch}
         search={search}
       />
       <div>
         <Routes>
-          <Route
-            index
-            path="/"
-            element={
-              <Home login={Object.keys(user).length === 0 ? false : true} />
-            }
-          />
+          <Route index path="/" element={<Home login={!!user.id} />} />
           <Route
             path="/products"
             element={
@@ -142,96 +88,38 @@ function App() {
                 cereals={cereals.slice(0, 4)}
                 animals={animals.slice(0, 4)}
                 addToCart={addToCart}
-                login={Object.keys(user).length === 0 ? false : true}
+                login={!!user.id}
               />
             }
           />
           <Route path="/contact" element={<ContactForm />} />
           <Route
             path="/products/fruits"
-            element={
-              <Category
-                products={fruits}
-                title="Fruits"
-                addToCart={addToCart}
-              />
-            }
+            element={<Category products={fruits} title="Fruits" addToCart={addToCart} />}
           />
           <Route
             path="/products/vegetables"
-            element={
-              <Category
-                products={vegetables}
-                title="Vegetables"
-                login={Object.keys(user).length === 0 ? false : true}
-                addToCart={addToCart}
-              />
-            }
+            element={<Category products={vegetables} title="Vegetables" login={!!user.id} addToCart={addToCart} />}
           />
           <Route
             path="/products/animals"
-            element={
-              <Category
-                products={animals}
-                title="Animal Products"
-                login={Object.keys(user).length === 0 ? false : true}
-                addToCart={addToCart}
-              />
-            }
+            element={<Category products={animals} title="Animal Products" login={!!user.id} addToCart={addToCart} />}
           />
           <Route
             path="/products/cereals"
-            element={
-              <Category
-                products={cereals}
-                title="Cereals and Grains"
-                login={Object.keys(user).length === 0 ? false : true}
-                addToCart={addToCart}
-              />
-            }
+            element={<Category products={cereals} title="Cereals and Grains" login={!!user.id} addToCart={addToCart} />}
           />
           <Route
             path="/products/search"
-            element={
-              <Category
-                products={products.filter((product) =>
-                  product.name.includes(search.toLowerCase())
-                )}
-                title="Search"
-                login={Object.keys(user).length === 0 ? false : true}
-                addToCart={addToCart}
-              />
-            }
+            element={<Category products={products.filter((p) => p.name.includes(search.toLowerCase()))} title="Search" login={!!user.id} addToCart={addToCart} />}
           />
-          <Route
-            path="/signin"
-            element={<AccountForm onSignIn={userLoggedIn} />}
-          />
-          <Route
-            path="/userProfile"
-            element={
-              <UserProfile
-                user={user}
-                setUserData={setLoggedIn}
-                userLogout={userLogout}
-              />
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <Admin products={products} setProducts={setProducts}/>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <Delivery userId={user.id}/>
-            }
-          />
+          <Route path="/signin" element={<AccountForm onSignIn={userLoggedIn} />} />
+          <Route path="/userProfile" element={<UserProfile user={user} setUserData={login} userLogout={logout} />} />
+          <Route path="/admin" element={<Admin products={products} setProducts={setProducts} />} />
+          <Route path="/orders" element={<Delivery userId={user.id} />} />
           <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
-        <Footer login={Object.keys(user).length === 0 ? false : true}/>
+        <Footer login={!!user.id} />
       </div>
     </div>
   );

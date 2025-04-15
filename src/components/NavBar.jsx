@@ -52,23 +52,10 @@ const NavBar = (props) => {
         })),
       };
 
-      try {
-    
-        const response = await axios.post(
-          "http://localhost/fresh-cart/api.php?action=create_order",
-          orderData
-        );
-
-        if (response.data.message === "Order created successfully") {
+     
           alert("Order placed successfully!");
           props.clearCart();
-        } else {
-          alert("Failed to place the order. Please try again.");
-        }
-      } catch (error) {
-        console.error("Error placing the order:", error);
-        alert("An error occurred. Please try again.");
-      }
+       
     }
   };
   return (

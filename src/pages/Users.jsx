@@ -1,80 +1,48 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import md5 from 'blueimp-md5';
+import md5 from "blueimp-md5";
+import data from "../json/data.json";
 import "./admin.css";
 import "./home.css";
 import "./category.css";
 
 const Users = () => {
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState(null);
+  const [users, setUsers] = useState([]);
   const [findUser, userSearch] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost/fresh-cart/api.php?action=get_users`
-        );
-        setUsers(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-        setError("Failed to fetch orders. Please try again.");
-        setLoading(false);
-      }
-    };
-    if (!users) {
-      fetchOrders();
-    }
-    if (users) {
-      userSearch(users.filter((user) => user.email.includes(search)));
+    // Simulate fetching data
+    setUsers(data.tables.users);
+  }, []);
+
+  useEffect(() => {
+    if (users.length > 0) {
+      userSearch(
+        users.filter((user) =>
+          user.email.toLowerCase().includes(search.toLowerCase())
+        )
+      );
     }
   }, [search, users]);
-  if (loading) {
-    return <div>Loading orders...</div>;
-  }
 
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-  const updatePassword = async (e) => {
+  const updatePassword = (e) => {
     e.preventDefault();
     const form = e.target;
-  const userId = e.target.id; 
-  const newPassword = md5(form.password.value); 
+    const userId = form.id;
+    const newPassword = md5(form.password.value);
 
-  if (!newPassword || newPassword.length < 4) {
-    alert("Password must be at least 4 characters.");
-    return;
-  }
-
-  try {
-    const response = await axios.put(
-      `http://localhost/fresh-cart/api.php?action=update_password`,
-      {
-        user_id: userId,
-        new_password: newPassword,
-      }
-    );
-
-    if (response.data.message === "Password updated successfully") {
-      alert("Password updated successfully!");
-      form.reset();
-    } else {
-      alert("Failed to update password. Please try again.");
+    if (!newPassword || newPassword.length < 4) {
+      alert("Password must be at least 4 characters.");
+      return;
     }
-  } catch (error) {
-    console.error("Error updating password:", error);
-    alert("An error occurred. Please try again.");
-  }
 
+    // Simulate success (you could update state if you wanted to)
+    alert(`Password updated successfully for user ID ${userId}`);
+    form.reset();
   };
 
   return (
-    <section >
+    <section>
       <div className="user-orders">
         <div
           style={{
@@ -92,7 +60,7 @@ const Users = () => {
             placeholder="search..."
           />
         </div>
-        <table >
+        <table>
           <thead>
             <tr>
               <th>User ID</th>
@@ -106,22 +74,32 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {findUser.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.city}</td>
-                <td>{user.address}</td>
-                <td>{user.account_type}</td>
-                <td>
-                  <form id={user.id} onSubmit={updatePassword}>
-                    <input type="text" name="password" />
-                  </form>
-                </td>
-              </tr>
-            ))}
+            {findUser.map((user) => {
+              const accountType = data.tables.account_type.find(
+                (type) => type.id === user.account_type
+              )?.name || "user";
+              return (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone_no}</td>
+                  <td>{user.city}</td>
+                  <td>{user.subcity || user.address}</td>
+                  <td>{accountType}</td>
+                  <td>
+                    <form id={user.id} onSubmit={updatePassword}>
+                      <input
+                        type="text"
+                        name="password"
+                        placeholder="New password"
+                      />
+                      <button type="submit">Update</button>
+                    </form>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -25,34 +25,10 @@ const ManageProducts = (props) => {
     setNewProduct({ ...newProduct, [e.target.name]: e.target.value });
   };
   const createProduct = async (e) => {
-    e.preventDefault();
-    if (
-      !newProduct.name.trim() ||
-      !newProduct.category.trim() ||
-      !newProduct.price.trim() ||
-      !newProduct.img.trim() 
-    ) {
-      alert("All fields are required.");
-      return;
-    }
-    if(props.products.find(product => product.name.toLowerCase() === newProduct.name.toLowerCase())){
-      alert("Product already exists")
-      return;
-    }
-    try{
-      const response = await axios.post(`http://localhost/fresh-cart/api.php?action=new_product`, newProduct)
-      if(response.data.message === "Product created successfully"){
-        alert("Product created successfully")
-        let id = response.data.id
-        props.setProducts([...props.products, {...newProduct, id}])
-      }else{
-        alert("Failed to create product")
-      }
-    }catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred");
-    }
-  };
+    e.preventDefault()
+    alert("Product added successfully")
+  }
+  
 
   return (
     <section>

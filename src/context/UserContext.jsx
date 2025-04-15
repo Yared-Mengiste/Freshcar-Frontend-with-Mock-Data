@@ -14,6 +14,10 @@ export const UserProvider = ({ children }) => {
     sessionStorage.setItem("user", JSON.stringify(user));
   }, [user]);
 
+  const login = (userData) => {
+    setUser(userData);
+  };
+
   const userLogout = () => {
     setUser({});
     sessionStorage.removeItem("user");
@@ -21,7 +25,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, userLogout }}>
+    <UserContext.Provider value={{ user, login, logout: userLogout }}>
       {children}
     </UserContext.Provider>
   );

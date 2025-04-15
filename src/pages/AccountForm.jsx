@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import md5 from "blueimp-md5";
+import { useUser } from "../context/UserContext";
 import showObserver from "../animation";
-import axios from "axios";
+import md5 from "blueimp-md5";
+import data from "../json/data.json";
 import "./home.css";
 
-const AccountForm = (props) => {
-  const [isSignIn, setIsSignIn] = useState(true);
+const AccountForm = () => {
+  const { login } = useUser();
   const navigate = useNavigate();
 
+  const [isSignIn, setIsSignIn] = useState(true);
+  const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,82 +21,70 @@ const AccountForm = (props) => {
     city: "",
     phone: "",
   });
-  useEffect(()=>{
-    showObserver()
-  },[])
-  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    showObserver();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!isSignIn) {
-      if (
-        !formData.password.trim() ||
-        !formData.confirmPassword.trim() ||
-        !formData.name.trim() ||
-        !formData.city.trim() ||
-        !formData.address.trim()
-      ) {
+      const {
+        name, email, password, confirmPassword, address, city, phone
+      } = formData;
+
+      if (!name || !email || !password || !confirmPassword || !address || !city || !phone) {
         setMessage("All fields are required.");
         return;
       }
-      if (formData.password !== formData.confirmPassword) {
+
+      if (password !== confirmPassword) {
         setMessage("Passwords do not match.");
         return;
       }
+
+      setMessage("Sign-up successful! Please log in.");
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        address: "",
+        city: "",
+        phone: "",
+      });
+      return;
     }
-
-    const password = formData.password;
-    const hashedPassword = md5(password);
-
-    const dataToSend = {
-      ...formData,
-      password: hashedPassword,
-    };
 
     try {
-      const response = await axios.post(
-        `http://localhost/fresh-cart/api.php?action=${
-          isSignIn ? "signin" : "signup"
-        }`,
-        dataToSend
+      const users = data.tables.users;
+      const hashedPassword = md5(formData.password);
+
+      const foundUser = users.find(
+        (user) =>
+          user.email.toLowerCase() === formData.email.toLowerCase() &&
+          user.password === hashedPassword
       );
 
-      if (response.data.message === "Sign-in successful") {
-        console.log("User data:", response.data.user);
-        props.onSignIn({ ...response.data.user, password: password });
+      if (foundUser) {
+        setMessage("");
+        login({ ...foundUser, password: formData.password }); // Keep plain password for session
         navigate("/");
-      } else if (response.data.message === "Sign-up successful") {
-        setMessage("Sign-up successful! Please log in.");
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          phone: "",
-          confirmPassword: "",
-          address: "",
-          city: "",
-        });
       } else {
-        setMessage(
-          response.data.message ||
-            response.data.error ||
-            "Form submitted successfully!"
-        );
+        setMessage("Invalid email or password.");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again.");
+      console.error("Error fetching user data:", error);
+      setMessage("Failed to sign in. Please try again.");
     }
   };
+
   return (
     <div className="wrappouter hidden-sec">
       <div className="signin">
@@ -116,16 +107,10 @@ const AccountForm = (props) => {
         </div>
 
         <div className="belowbutton">
+          {message && <p className="message">{message}</p>}
+
           {isSignIn ? (
             <form className="sign-in-form" onSubmit={handleSubmit}>
-              {message && (
-                <p
-                  className="message"
-                  style={{ color: "var(--primary-color)" }}
-                >
-                  {message}
-                </p>
-              )}
               <label>
                 Email:
                 <input
@@ -152,14 +137,6 @@ const AccountForm = (props) => {
             </form>
           ) : (
             <form className="sign-up-form" onSubmit={handleSubmit}>
-              {message && (
-                <p
-                  className="message"
-                  style={{ color: "var(--primary-color)" }}
-                >
-                  {message}
-                </p>
-              )}
               <label>
                 Name:
                 <input
@@ -256,84 +233,3 @@ const AccountForm = (props) => {
 };
 
 export default AccountForm;
-
-// import { useState } from "react";
-// import "./home.css";
-
-// const AccountForm = () => {
-//   const [isSignIn, setIsSignIn] = useState(true);
-
-//   return (
-//     <div className="wrappouter">
-//       <div className="signin">
-//         <div className="button-group">
-//           <button
-//             type="button"
-//             className={`signin-btn ${isSignIn ? "active" : "inactive"}`}
-//             onClick={() => setIsSignIn(true)}
-//           >
-//             <p>Sign In</p>
-//           </button>
-//           <h1>|</h1>
-//           <button
-//             type="button"
-//             className={`signin-btn ${!isSignIn ? "active" : "inactive"}`}
-//             onClick={() => setIsSignIn(false)}
-//           >
-//             <p>Sign Up</p>
-//           </button>
-//         </div>
-
-//         <div className="belowbutton">
-//           {isSignIn ? (
-//             <form className="sign-in-form">
-//               <label>
-//                 Email:
-//                 <input type="email" name="email" required />
-//               </label>
-//               <label>
-//                 Password:
-//                 <input type="password" name="password" required />
-//               </label>
-//               <button className="secondary-btn" type="submit">
-//                 <p>Sign In</p>
-//               </button>
-//             </form>
-//           ) : (
-//             <form className="sign-up-form">
-//               <label>
-//                 Name:
-//                 <input type="email" name="name" required />
-//               </label>
-//               <label>
-//                 Email:
-//                 <input type="email" name="email" required />
-//               </label>
-//               <label>
-//                 Password:
-//                 <input type="password" name="password" required />
-//               </label>
-//               <label>
-//                 Confirm Password:
-//                 <input type="password" name="confirmPassword" required />
-//               </label>
-//               <label>
-//                 Address:
-//                 <input type="text" name="address" required/>
-//               </label>
-//               <label>
-//                 City:
-//                 <input type="text" name="city" required />
-//               </label>
-//               <button className="secondary-btn" type="submit">
-//                 <p>Sign Up</p>
-//               </button>
-//             </form>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AccountForm;

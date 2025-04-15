@@ -7,39 +7,35 @@ import "./NavBar.css";
 import "./Search.css";
 import SearchIcon from "../assets/search.png";
 import Cart from "../assets/cart.png";
-
+import { useSearch } from "../context/SearchContext";
 
 const toggleCart = () => {
   const cart = document.querySelector(".cart-container");
-  console.log(cart);
   cart.classList.toggle("cart-visible");
-
-  console.log(cart);
 };
 
 const NavBar = (props) => {
+  const { setSearch } = useSearch();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+
   const handleSearch = (e) => {
-    let value = e.target.value;
-    props.setSearch(value);
-    console.log(value)
-    setSearchText(value);    
+    const value = e.target.value;
+    setSearch(value);
+    setSearchText(value);
   };
 
   const logout = () => {
-    console.log("Logout clicked");
     props.onLogout();
     navigate("/");
   };
-  const sendToDB = async (e) => {
-    e.preventDefault(); 
 
-    
+  const sendToDB = async (e) => {
+    e.preventDefault();
     if (props.cart.length > 0) {
       const orderData = {
         user_id: props.userId,
-        city:props.user.city,
+        city: props.user.city,
         address: props.user.address,
         total_price: props.cart.reduce(
           (total, item) => total + item.price * item.quantity,
@@ -51,13 +47,11 @@ const NavBar = (props) => {
           price: item.price,
         })),
       };
-
-     
-          alert("Order placed successfully!");
-          props.clearCart();
-       
+      alert("Order placed successfully!");
+      props.clearCart();
     }
   };
+
   return (
     <section className="nav-section">
       <header>
@@ -67,9 +61,7 @@ const NavBar = (props) => {
           </div>
           <div className="search-menu">
             <div className="search-container">
-              
               <img src={SearchIcon} alt="" className="icon search" />
-              
               <input
                 className="search-input"
                 type="text"
@@ -80,15 +72,9 @@ const NavBar = (props) => {
             </div>
 
             <div className="menu-container">
-              {/* <div className="img"> */}
-                <img
-                  src={Menu}
-                  alt="menu"
-                  className="icon"
-                />
-              {/* </div> */}
+              <img src={Menu} alt="menu" className="icon" />
               <nav>
-                <ul className="">
+                <ul>
                   <li>
                     <NavLink to="/">HOME</NavLink>
                   </li>
@@ -98,9 +84,11 @@ const NavBar = (props) => {
                   <li>
                     <NavLink to="/contact">CONTACT</NavLink>
                   </li>
-                  {(props.login&&props.user.account_type==2)&&<li>
-                    <NavLink to="/admin">ADMIN</NavLink>
-                  </li>}
+                  {props.login && props.user.account_type === 2 && (
+                    <li>
+                      <NavLink to="/admin">ADMIN</NavLink>
+                    </li>
+                  )}
                 </ul>
               </nav>
             </div>
@@ -116,10 +104,10 @@ const NavBar = (props) => {
                     <span className="profile-name">{props.user.name}</span>
                   </div>
                   <div className="profile-dropdown">
-                    <Link className="dropdown-item" to='/userProfile'>
+                    <Link className="dropdown-item" to="/userProfile">
                       Edit Account
                     </Link>
-                    <Link className="dropdown-item" to='/orders'>
+                    <Link className="dropdown-item" to="/orders">
                       Orders
                     </Link>
                     <button className="dropdown-item" onClick={logout}>
@@ -161,7 +149,6 @@ const NavBar = (props) => {
               </p>
             </div>
             <div className="cart-items">
-              {console.log(props.cart)}
               {props.cart.map((item) => {
                 return (
                   <CartItem
@@ -201,24 +188,3 @@ const NavBar = (props) => {
 };
 
 export default NavBar;
-
-{
-  /* <nav>
-  <ul>
-    <li>
-      <NavLink to="/"> Home</NavLink>
-    </li>
-    <li>
-      <NavLink to="/products">Products</NavLink>
-    </li>
-
-    <li>
-      <NavLink to="/contact">Contact</NavLink>
-    </li>
-  </ul>
-</nav>; */
-}
-
-{
-  /* <img src={Logo} width={"60px"} style={{ borderRadius: "50%" }} alt="logo" />; */
-}

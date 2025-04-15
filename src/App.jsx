@@ -1,6 +1,6 @@
+// src/App.jsx
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
 import AccountForm from "./pages/AccountForm";
@@ -11,19 +11,17 @@ import ContactForm from "./pages/ContactForm";
 import UserProfile from "./pages/UserProfile";
 import Delivery from "./pages/Delivery";
 import Admin from "./pages/Admin";
-
 import data from "../src/json/data.json";
 import { useCart } from "./context/CartProvider";
 import { useUser } from "./context/UserContext";
+import { useSearch } from "./context/SearchContext";
 
 function App() {
   const { cart, addToCart, removeFromCart, clearCart, setCart } = useCart();
   const { user, login, logout } = useUser();
-
+  const { search, setSearch } = useSearch();
   const [products, setProducts] = useState([]);
-
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +34,7 @@ function App() {
     if (search.trim().length > 0) {
       navigate("/products/search");
     } else {
-      navigate("/products");
+      navigate("/");
     }
   }, [search]);
 
@@ -52,8 +50,6 @@ function App() {
         clearCart={clearCart}
         user={user}
         onLogout={logout}
-        setSearch={setSearch}
-        search={search}
       />
       <div>
         <Routes>
@@ -104,7 +100,6 @@ function App() {
           <Route path="/orders" element={<Delivery userId={user.id} />} />
           <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
-
         <Footer login={!!user.id} />
       </div>
     </div>

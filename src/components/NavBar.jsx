@@ -18,6 +18,7 @@ const NavBar = (props) => {
   const { setSearch } = useSearch();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+  
 
   const handleSearch = (e) => {
     const value = e.target.value;

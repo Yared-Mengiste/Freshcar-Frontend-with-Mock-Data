@@ -1,10 +1,11 @@
+// src/pages/Category.jsx
 import React, { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import Product from "../components/Product";
 import "./category.css";
 import showObserver from "../animation";
 import data from "../json/data.json";
-
+import { useSearch } from "../context/SearchContext";
 
 const CATEGORY_MAP = {
   fruits: { id: 2, title: "Fruits" },
@@ -13,30 +14,32 @@ const CATEGORY_MAP = {
   animals: { id: 4, title: "Animal Products" },
 };
 
-const Category = ({ searchProducts, login, addToCart }) => {
+const Category = ({ login, addToCart }) => {
   const { type } = useParams();
-  const allProducts = searchProducts || data.tables.products;
-
+  const { search } = useSearch();
+  const allProducts = data.tables.products;
 
   const { id: categoryId, title } = CATEGORY_MAP[type] || {};
-  console.log(categoryId, title);
 
   const products = useMemo(() => {
-    if (searchProducts) return searchProducts;
-  
+    if (search) {
+      return allProducts.filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
     if (!categoryId) return [];
     return allProducts.filter((p) => p.category === categoryId);
-  }, [searchProducts, categoryId, allProducts]);
-  
+  }, [search, categoryId, allProducts]);
+
   useEffect(() => {
     showObserver();
   }, []);
 
-  if (!CATEGORY_MAP[type] && !searchProducts) return <h1>Category Not Found</h1>;
+  if (!CATEGORY_MAP[type] && !search) return <h1>Category Not Found</h1>;
 
   return (
     <section>
-      <h2 id="category-name">{searchProducts? 'Search': title}</h2>
+      <h2 id="category-name">{search ? "Search Results" : title}</h2>
       <div className="category-products">
         {products.map((product) => (
           <div className="hidden-sec" key={product.id}>

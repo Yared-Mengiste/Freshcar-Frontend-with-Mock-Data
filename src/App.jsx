@@ -19,7 +19,7 @@ import { useSearch } from "./context/SearchContext";
 function App() {
   const { cart, addToCart, removeFromCart, clearCart, setCart } = useCart();
   const { user, login, logout } = useUser();
-  const { search, setSearch } = useSearch();
+  const { search } = useSearch();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -73,9 +73,6 @@ function App() {
             path="/products/search"
             element={
               <Category
-                searchProducts={products.filter((p) =>
-                  p.name.toLowerCase().includes(search.toLowerCase())
-                )}
                 title="Search"
                 login={!!user.id}
                 addToCart={addToCart}

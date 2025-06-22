@@ -6,6 +6,8 @@ import "./category.css";
 import showObserver from "../animation";
 import data from "../json/data.json";
 import { useSearch } from "../context/SearchContext";
+import { useCart } from "../context/CartProvider";
+import { useUser } from "../context/UserContext";
 
 const CATEGORY_MAP = {
   fruits: { id: 2, title: "Fruits" },
@@ -14,9 +16,12 @@ const CATEGORY_MAP = {
   animals: { id: 4, title: "Animal Products" },
 };
 
-const Category = ({ login, addToCart }) => {
+const Category = () => {
   const { type } = useParams();
   const { search } = useSearch();
+  const { addToCart } = useCart();
+  const { user } = useUser();
+  const login = !!user.id;
   const allProducts = data.tables.products;
 
   const { id: categoryId, title } = CATEGORY_MAP[type] || {};

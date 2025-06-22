@@ -3,9 +3,15 @@ import Product from "../components/Product";
 import { Link } from "react-router-dom";
 import showObserver from "../animation";
 import "./products.css";
-import data from "../json/data.json"; // 👈 Import product data
+import data from "../json/data.json";
+import { useCart } from "../context/CartProvider";
+import { useUser } from "../context/UserContext";
 
-const Products = ({ login, addToCart }) => {
+const Products = () => {
+  const { addToCart } = useCart();
+  const { user } = useUser();
+  const login = !!user.id;
+
   useEffect(() => {
     showObserver();
   }, []);
@@ -20,7 +26,7 @@ const Products = ({ login, addToCart }) => {
   return (
     <section>
       <div className="products-container">
-        {/* VEGETABLES */}
+        {/* vegetables */}
         <div className="category hidden-sec">
           <div className="category-name">
             <h3>Vegetables</h3>
@@ -38,7 +44,7 @@ const Products = ({ login, addToCart }) => {
           </div>
         </div>
 
-        {/* FRUITS */}
+        {/* fruits */}
         <div className="category hidden-sec">
           <div className="category-name">
             <h3>Fruits</h3>
@@ -56,7 +62,7 @@ const Products = ({ login, addToCart }) => {
           </div>
         </div>
 
-        {/* CEREALS */}
+        {/* cereals */}
         <div className="category hidden-sec">
           <div className="category-name">
             <h3>Cereals and Grains</h3>
@@ -74,7 +80,7 @@ const Products = ({ login, addToCart }) => {
           </div>
         </div>
 
-        {/* ANIMAL PRODUCTS */}
+        {/* Animal products */}
         <div className="category hidden-sec">
           <div className="category-name">
             <h3>Animal Products</h3>

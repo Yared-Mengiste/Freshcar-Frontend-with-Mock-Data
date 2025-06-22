@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Career from "../assets/careers-image-opt.png";
 import Partner from "../assets/partners-image-opt.png";
@@ -6,11 +6,22 @@ import Together from "../assets/together-opt.svg";
 import Rider from "../assets/rider-image-opt.png";
 import showObserver from "../animation";
 import "./home.css";
+import { useUser } from "../context/UserContext";
+import { useCart } from "../context/CartProvider";
+import Product from "../components/Product";
+import data from "../json/data.json";
 
-const Home = (props) => {
-  useEffect(()=>{
-    showObserver()
-  },[])
+const Home = () => {
+  const { user } = useUser();
+  const isLoggedIn = !!user.id;
+  const { addToCart } = useCart();
+
+  useEffect(() => {
+    showObserver();
+  }, []);
+
+  const allProducts = data.tables.products;
+  const featuredProducts = allProducts.slice(0, 4);
 
   return (
     <div>
@@ -27,42 +38,30 @@ const Home = (props) => {
               </a>
             </div>
           </div>
-          {/* <div className="heroimg">
-            <img src={heroimg} alt="heroimg" />
-          </div> */}
         </div>
       </section>
 
-      {/* <div className="wrapper">
-        <h2>Why Choose fresh cart Delivery?</h2>
-        <p>
-          We bring the market to your doorstep with quality, convenience, and
-          care.
-        </p>
-        <div className="whythere">
-          <div className="why">
-            <img src={whyfresh} alt="whyfresh" />
-            <h3>Fresh selection</h3>
-            <p>
-              Hand-picked fresh produce sourced directly from local markets and
-              farmers.
-            </p>
+      <section className="category section-mb hidden-sec">
+        <h2 className="align">Featured Products</h2>
+
+        <div className="category hidden-sec">
+          <div className="category-name">
+            <h3>Top</h3>
+            <Link to="/products">Show More {">>"}</Link>
           </div>
-          <div className="why">
-            <img src={whyfast} alt="whyfast" />
-            <h3>Quality Promise</h3>
-            <p>100% satisfaction guaranteed or your money back</p>
-          </div>
-          <div className="why">
-            <img src={whyquality} alt="whyquality" />
-            <h3>Quality Guaranteed</h3>
-            <p>
-              Our products are guaranteed to be of the highest quality and
-              freshness.
-            </p>
+          <div className="category-items">
+            {featuredProducts.slice(0, 4).map((item) => (
+              <Product
+                key={item.id}
+                {...item}
+                login={isLoggedIn}
+                addToCart={addToCart}
+              />
+            ))}
           </div>
         </div>
-      </div> */}
+      </section>
+
       <section className="section-features section-mb hidden-sec">
         <a name="features" />
         <div className="row">
@@ -124,7 +123,7 @@ const Home = (props) => {
       </section>
       <section className="section-partners section-mb hidden-sec">
         <div className="partners-container">
-          <div class="row">
+          <div className="row">
             <h2 className="align">Let's do it together</h2>
           </div>
           <img src={Together} className="icon-partner" alt="Together image" />
@@ -142,7 +141,10 @@ const Home = (props) => {
                     </p>
                   </div>
                 </div>
-                <Link className="btn btn-ghost" to={props.login?'/products':'/signin'}>
+                <Link
+                  className="btn btn-ghost"
+                  to={isLoggedIn ? "/products" : "/signin"}
+                >
                   Register here
                 </Link>
               </div>
@@ -151,7 +153,7 @@ const Home = (props) => {
             <div className="row">
               <div className="elements">
                 <div className="elements-top">
-                  <img src={Partner} alt="Rider image" />
+                  <img src={Partner} alt="Partner image" />
                   <div className="elements-text">
                     <h3>Become a partner</h3>
                     <p>
@@ -161,7 +163,10 @@ const Home = (props) => {
                     </p>
                   </div>
                 </div>
-                <Link className="btn btn-ghost" to={props.login?'/products':'/signin'}>
+                <Link
+                  className="btn btn-ghost"
+                  to={isLoggedIn ? "/products" : "/signin"}
+                >
                   Register here
                 </Link>
               </div>
@@ -170,17 +175,20 @@ const Home = (props) => {
             <div className="row">
               <div className="elements">
                 <div className="elements-top">
-                  <img src={Career} alt="Rider image" />
+                  <img src={Career} alt="Career image" />
                   <div className="elements-text">
                     <h3>Careers</h3>
                     <p>
-                      Ready for an exciting new challenge? If you’re ambitious,
+                      Ready for an exciting new challenge? If you're ambitious,
                       humble, and love working with others, then we want to hear
                       from you!
                     </p>
                   </div>
                 </div>
-                <Link className="btn btn-ghost" to={props.login?'/products':'/signin'}>
+                <Link
+                  className="btn btn-ghost"
+                  to={isLoggedIn ? "/products" : "/signin"}
+                >
                   Register here
                 </Link>
               </div>
@@ -188,6 +196,7 @@ const Home = (props) => {
           </div>
         </div>
       </section>
+
       <section className="section-plans section-mb hidden-sec">
         <div className="plans">
           <h2>Simple Delivery Plans</h2>
@@ -204,9 +213,12 @@ const Home = (props) => {
                   <li>Market prices</li>
                 </ul>
               </div>
-              <Link className="btn btn-ghost" to={props.login?'/products':'/signin'}>
-                  Register here
-                </Link>
+              <Link
+                className="btn btn-ghost"
+                to={isLoggedIn ? "/products" : "/signin"}
+              >
+                Register here
+              </Link>
             </div>
 
             <div className="cards">
@@ -220,9 +232,12 @@ const Home = (props) => {
                   <li>Special discounts</li>
                 </ul>
               </div>
-              <Link className="btn btn-ghost" to={props.login?'/products':'/signin'}>
-                  Register here
-                </Link>
+              <Link
+                className="btn btn-ghost"
+                to={isLoggedIn ? "/products" : "/signin"}
+              >
+                Register here
+              </Link>
             </div>
 
             <div className="cards">
@@ -236,9 +251,12 @@ const Home = (props) => {
                   <li>Price lock guarantee</li>
                 </ul>
               </div>
-              <Link className="btn btn-ghost" to={props.login?'/products':'/signin'}>
-                  Register here
-                </Link>
+              <Link
+                className="btn btn-ghost"
+                to={isLoggedIn ? "/products" : "/signin"}
+              >
+                Register here
+              </Link>
             </div>
           </div>
         </div>

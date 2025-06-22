@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useDeferredValue } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CartItem from "./CartItem";
@@ -8,55 +8,61 @@ import "./Search.css";
 import SearchIcon from "../assets/search.png";
 import Cart from "../assets/cart.png";
 import { useSearch } from "../context/SearchContext";
+import { useCart } from "../context/CartProvider";
+import { useUser } from "../context/UserContext";
 
 const toggleCart = () => {
   const cart = document.querySelector(".cart-container");
   cart.classList.toggle("cart-visible");
 };
 
-const NavBar = (props) => {
-  const {setSearch } = useSearch();
+const NavBar = () => {
+  const { setSearch } = useSearch();
+  const { cart, removeFromCart, clearCart } = useCart();
+  const { user, logout } = useUser();
   const [searchText, setSearchText] = useState("");
+  const deferredQuery = useDeferredValue(searchText);
   const navigate = useNavigate();
 
-   useEffect(() => {
-      if (searchText.trim().length > 0) {
-        navigate("/products/search");
-      } else {
-        navigate("/");
-      }
-    }, [searchText]);
+  useEffect(() => {
+    setSearch(deferredQuery);
+    if (deferredQuery.trim().length > 0) {
+      navigate("/products/search");
+    } else {
+      navigate("/");
+    }
+  }, [searchText, deferredQuery]);
 
   const handleSearch = (e) => {
     const value = e.target.value;
-    setSearch(value);
     setSearchText(value);
   };
 
-  const logout = () => {
-    props.onLogout();
+  const handleLogout = () => {
+    logout();
     navigate("/");
   };
 
   const sendToDB = async (e) => {
     e.preventDefault();
-    if (props.cart.length > 0) {
+    if (cart.length > 0) {
       const orderData = {
-        user_id: props.userId,
-        city: props.user.city,
-        address: props.user.address,
-        total_price: props.cart.reduce(
+        user_id: user.id,
+        city: user.city,
+        address: user.address,
+        total_price: cart.reduce(
           (total, item) => total + item.price * item.quantity,
           0
         ),
-        items: props.cart.map((item) => ({
+        items: cart.map((item) => ({
           id: item.id,
           quantity: item.quantity,
           price: item.price,
         })),
       };
+      console.log(orderData);
       alert("Order placed successfully!");
-      props.clearCart();
+      clearCart();
     }
   };
 
@@ -92,7 +98,7 @@ const NavBar = (props) => {
                   <li>
                     <NavLink to="/contact">CONTACT</NavLink>
                   </li>
-                  {props.login && props.user.account_type === 2 && (
+                  {user.id && user.account_type === 2 && (
                     <li>
                       <NavLink to="/admin">ADMIN</NavLink>
                     </li>
@@ -100,7 +106,7 @@ const NavBar = (props) => {
                 </ul>
               </nav>
             </div>
-            {props.login ? (
+            {user.id ? (
               <div>
                 <div className="profile-container">
                   <div className="profile">
@@ -109,7 +115,7 @@ const NavBar = (props) => {
                       alt="Profile"
                       className="profile-picture"
                     />
-                    <span className="profile-name">{props.user.name}</span>
+                    <span className="profile-name">{user.name}</span>
                   </div>
                   <div className="profile-dropdown">
                     <Link className="dropdown-item" to="/userProfile">
@@ -118,7 +124,7 @@ const NavBar = (props) => {
                     <Link className="dropdown-item" to="/orders">
                       Orders
                     </Link>
-                    <button className="dropdown-item" onClick={logout}>
+                    <button className="dropdown-item" onClick={handleLogout}>
                       Logout
                     </button>
                   </div>
@@ -132,7 +138,7 @@ const NavBar = (props) => {
           </div>
         </div>
       </header>
-      {props.login && (
+      {user.id && (
         <div>
           <img src={Cart} alt="" className="cart" onClick={toggleCart} />
           <div className="cart-container cart-visible">
@@ -150,14 +156,14 @@ const NavBar = (props) => {
               </h3>
               <p className="product-price">
                 Total : $
-                {props.cart.reduce(
+                {cart.reduce(
                   (a, item) => a + item.price * item.quantity,
                   0
                 )}
               </p>
             </div>
             <div className="cart-items">
-              {props.cart.map((item) => {
+              {cart.map((item) => {
                 return (
                   <CartItem
                     key={item.id}
@@ -165,7 +171,7 @@ const NavBar = (props) => {
                     name={item.name}
                     price={item.price}
                     quantity={item.quantity}
-                    removeFromCart={props.removeFromCart}
+                    removeFromCart={removeFromCart}
                   />
                 );
               })}

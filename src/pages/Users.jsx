@@ -11,7 +11,6 @@ const Users = () => {
   const [findUser, userSearch] = useState([]);
 
   useEffect(() => {
-    // Simulate fetching data
     setUsers(data.tables.users);
   }, []);
 
@@ -36,7 +35,6 @@ const Users = () => {
       return;
     }
 
-    // Simulate success (you could update state if you wanted to)
     alert(`Password updated successfully for user ID ${userId}`);
     form.reset();
   };

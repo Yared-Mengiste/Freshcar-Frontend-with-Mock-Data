@@ -3,30 +3,52 @@ import axios from "axios";
 import md5 from "blueimp-md5";
 import { useNavigate } from "react-router-dom";
 import "./userProfile.css";
+import { useUser } from "../context/UserContext";
 
-const UserProfile = (props) => {
-  const [userData, setUserData] = useState({
-    ...props.user,
-    confirmPassword: props.user.password,
+const UserProfile = () => {
+  const { user, setUser, logout } = useUser();
+  const [formData, setFormData] = useState({
+    ...user,
+    confirmPassword: user.password,
   });
-
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Updated Successfully");
+    try {
+      if (formData.password && formData.password !== formData.confirmPassword) {
+        setMessage("Passwords don't match");
+        return;
+      }
+
+      const updatedUser = {
+        ...formData,
+        password: formData.password ? md5(formData.password) : user.password
+      };
+      delete updatedUser.confirmPassword; 
+      setUser(updatedUser);
+      setMessage("Profile updated successfully!");
+    } catch (error) {
+      setMessage("Error updating profile");
+      console.error(error);
+    }
   };
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
-      alert(response.data.message);
-      props.userLogout();
-      navigate("/");
+      try {
+        alert("Account deleted successfully");
+        logout();
+        navigate("/");
+      } catch (error) {
+        setMessage("Error deleting account");
+        console.error(error);
+      }
     }
   };
 
@@ -41,35 +63,36 @@ const UserProfile = (props) => {
           <input
             type="text"
             name="name"
-            value={userData.name}
+            value={formData.name}
             onChange={handleChange}
             required
           />
-          <label>
-            Phone:
-            <input
-              type="text"
-              name="phone"
-              pattern="09[0-9]{8}"
-              value={userData.phone}
-              onChange={handleChange}
-              required
-            />
-          </label>
+          
+          <label>Phone:</label>
+          <input
+            type="text"
+            name="phone"
+            pattern="09[0-9]{8}"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+          
           <label>Password:</label>
           <input
             type="password"
             name="password"
-            value={userData.password}
+            value={formData.password}
             onChange={handleChange}
             placeholder="Enter new password"
             minLength={4}
           />
+          
           <label>Confirm Password:</label>
           <input
             type="password"
             name="confirmPassword"
-            value={userData.confirmPassword}
+            value={formData.confirmPassword}
             onChange={handleChange}
             placeholder="Confirm Password"
             minLength={4}
@@ -79,7 +102,7 @@ const UserProfile = (props) => {
           <input
             type="text"
             name="city"
-            value={userData.city}
+            value={formData.city}
             onChange={handleChange}
             required
           />
@@ -88,7 +111,7 @@ const UserProfile = (props) => {
           <input
             type="text"
             name="address"
-            value={userData.address}
+            value={formData.address}
             onChange={handleChange}
             required
           />

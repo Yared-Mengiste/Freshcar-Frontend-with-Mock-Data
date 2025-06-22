@@ -1,40 +1,43 @@
 import React from "react";
-import {Link} from 'react-router-dom'
+import { Link, NavLink } from "react-router-dom";
 import "./footer.css";
-import { NavLink } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
-const Footer = (props) => {
+const Footer = () => {
+  const { user } = useUser();
+  const isLoggedIn = !!user.id;
+
   return (
-    <footer class="footer1">
-      <div class="container">
-        <div class="col1">
-          <a href="#" class="brand">
-            Brand
-          </a>
-          <ul class="media-icons">
+    <footer className="footer1">
+      <div className="container">
+        <div className="col1">
+          <Link to="/" className="brand">
+            FreshCart
+          </Link>
+          <ul className="media-icons">
             <li>
-              <a href="#">
+              <a href="#" aria-label="Facebook">
                 <ion-icon name="logo-facebook"></ion-icon>
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="#" aria-label="Twitter">
                 <ion-icon name="logo-twitter"></ion-icon>
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="#" aria-label="Instagram">
                 <ion-icon name="logo-instagram"></ion-icon>
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="#" aria-label="LinkedIn">
                 <ion-icon name="logo-linkedin"></ion-icon>
               </a>
             </li>
           </ul>
         </div>
-        <div class="col2">
+        <div className="col2">
           <ul className="menu">
             <li>
               <NavLink to="/">HOME</NavLink>
@@ -52,33 +55,20 @@ const Footer = (props) => {
             just a few clicks, no need to leave home!
           </p>
         </div>
-        <div class="col3">
+        <div className="col3">
           <p>Subscribe to our newsletter</p>
           <form>
-            <div class="input-wrap">
-              <input type="email" placeholder="example@gmail.com" />
-              <Link to={props.login?'/products':'/signin'}>
+            <div className="input-wrap">
+              <input 
+                type="email" 
+                placeholder="example@gmail.com" 
+                aria-label="Email for newsletter subscription"
+              />
+              <Link to={isLoggedIn ? '/products' : '/signin'} aria-label="Subscribe">
                 <ion-icon name="paper-plane-outline"></ion-icon>
               </Link>
             </div>
           </form>
-          {/* <ul class="service-icons">
-            <li>
-              <a href="#">
-                <ion-icon name="logo-amazon"></ion-icon>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <ion-icon name="logo-paypal"></ion-icon>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <ion-icon name="logo-bitcoin"></ion-icon>
-              </a>
-            </li>
-          </ul> */}
         </div>
       </div>
     </footer>

@@ -8,7 +8,7 @@ import { SearchProvider } from './context/SearchContext';
 import App from './App';
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
+  <BrowserRouter basename="/Freshcar-Frontend-with-Mock-Data">
     <CartProvider>
       <UserProvider>
         <SearchProvider>

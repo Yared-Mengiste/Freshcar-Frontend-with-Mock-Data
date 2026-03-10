@@ -7,4 +7,5 @@ export default defineConfig({
   build: {
     sourcemap: true, // Explicitly enable source maps
   },
+  base: process.env.VITE_BASE_PATH || "/Freshcar-Frontend-with-Mock-Data",
 });

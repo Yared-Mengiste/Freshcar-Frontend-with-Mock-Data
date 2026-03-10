@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import  {useNavigate} from 'react-router-dom'
-import "./Product.css";
+import "./product.css";
 import Plus from "../assets/plus.png";
 
 

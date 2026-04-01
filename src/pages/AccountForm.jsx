@@ -88,6 +88,7 @@ const AccountForm = () => {
     try {
       const users = data.tables.users;
       const hashedPassword = md5(formData.password);
+      
 
 
       const foundUser = users.find(
@@ -117,14 +118,14 @@ const AccountForm = () => {
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
             <button 
               className="secondary-btn" 
-              onClick={() => handleQuickLogin("solomon@gmail.com", "1234")}
+              onClick={() => handleQuickLogin("solomon@gmail.com", "0922415744")}
               style={{ padding: '5px 15px', fontSize: '12px' }}
             >
               Login as Admin
             </button>
             <button 
               className="secondary-btn" 
-              onClick={() => handleQuickLogin("abebe@gmail.com", "1234")}
+              onClick={() => handleQuickLogin("abebe@gmail.com", "0922415744")}
               style={{ padding: '5px 15px', fontSize: '12px' }}
             >
               Login as User

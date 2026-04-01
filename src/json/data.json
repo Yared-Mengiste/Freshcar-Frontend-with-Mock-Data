@@ -46,7 +46,6 @@
         "quantity": 6,
         "price": 50.0
       }
-     
     ],
     "orders": [
       {
@@ -338,7 +337,7 @@
       },
       {
         "id": 6,
-        "name": "solomon cheru",
+        "name": "solomon",
         "email": "solomon@gmail.com",
         "city": "Addis Ababa",
         "address": "kolfe keranio",

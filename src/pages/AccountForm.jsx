@@ -25,6 +25,29 @@ const AccountForm = () => {
   useEffect(() => {
     showObserver();
   }, []);
+  const handleQuickLogin = (email, password) => {
+    setIsSignIn(true); // Ensure we are on the Sign In tab
+    
+    // 1. Update the form state
+    const demoData = { ...formData, email, password };
+    setFormData(demoData);
+
+    // 2. Locate user and login immediately
+    try {
+      const users = data.tables.users;
+      const hashedPassword = md5(password);
+      const foundUser = users.find(
+        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === hashedPassword
+      );
+
+      if (foundUser) {
+        login({ ...foundUser, password }); 
+        navigate("/");
+      }
+    } catch (error) {
+      setMessage("Quick login failed. Check your data.json");
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,6 +89,7 @@ const AccountForm = () => {
       const users = data.tables.users;
       const hashedPassword = md5(formData.password);
 
+
       const foundUser = users.find(
         (user) =>
           user.email.toLowerCase() === formData.email.toLowerCase() &&
@@ -88,6 +112,25 @@ const AccountForm = () => {
   return (
     <div className="wrappouter hidden-sec">
       <div className="signin">
+      <div className="demo-login-section" style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <p style={{ fontSize: '14px', color: '#666' }}>Test Credentials:</p>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <button 
+              className="secondary-btn" 
+              onClick={() => handleQuickLogin("solomon@gmail.com", "1234")}
+              style={{ padding: '5px 15px', fontSize: '12px' }}
+            >
+              Login as Admin
+            </button>
+            <button 
+              className="secondary-btn" 
+              onClick={() => handleQuickLogin("abebe@gmail.com", "1234")}
+              style={{ padding: '5px 15px', fontSize: '12px' }}
+            >
+              Login as User
+            </button>
+          </div>
+        </div>
         <div className="button-group">
           <button
             type="button"
